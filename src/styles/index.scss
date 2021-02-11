@@ -1,2 +1,43 @@
 @import '~normalize-scss/sass/normalize';
 @include normalize();
+
+body {
+  display: grid;
+  grid-template-areas: 'h' 's' 'p';
+  grid-template-rows: 2fr 2fr 20fr;
+  margin: 2rem;
+}
+
+.header {
+  grid-area: h;
+  text-align: center;
+  background-color: aquamarine;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: row;
+  grid-area: s;
+  justify-content: space-around;
+  background-color: coral;
+}
+
+.pageBody {
+  display: flex;
+  grid-area: p;
+  justify-content: center;
+  background-color: darkgrey;
+  table {
+    width: 50rem;
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+  }
+  td, th {
+    text-align: left;
+    padding: 8px;
+    border: 1px solid #dddddd;
+  }
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+}
