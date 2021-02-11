@@ -1,25 +1,19 @@
-const TABLE = {
-  A: 'a',
-  B: 'b',
-  C: 'c',
-};
-
 export default class Page {
   constructor(rootElement) {
     this.rootElement = rootElement;
     this.header = null;
     this.sidebar = null;
     this.pageBody = null;
-    // eslint-disable-next-line prefer-destructuring
-    this.table = TABLE.A;
+    this.table = null;
     this.currenies = null;
+    this.curentTableIndex = 'a';
+    this.updateTable = this.updateTable.bind(this);
   }
 
   async render() {
     this.createHeader();
     this.createsidebar();
-    await this.getCurrency();
-    this.createTable();
+    await this.createTable();
     this.createPageBody();
 
     this.rootElement.appendChild(this.header);
@@ -75,11 +69,15 @@ export default class Page {
     const btnB = document.createElement('button');
     const btnC = document.createElement('button');
 
-    buttonsWrapper.append(btnA, btnB, btnC);
-
     btnA.innerText = 'tabela A';
+    btnA.dataset.id = 'a';
     btnB.innerText = 'tabela B';
+    btnB.dataset.id = 'b';
     btnC.innerText = 'tabela C';
+    btnC.dataset.id = 'c';
+
+    buttonsWrapper.append(btnA, btnB, btnC);
+    buttonsWrapper.addEventListener('click', this.updateTable);
 
     pageWrapper.appendChild(buttonsWrapper);
     pageWrapper.appendChild(this.table);
@@ -87,43 +85,77 @@ export default class Page {
     this.pageBody = pageWrapper;
   }
 
-  createTable() {
+  updateTable(e) {
+    this.curentTableIndex = e.target.closest('button').dataset.id;
+    this.pageBody.remove();
+    this.createTable();
+    this.createPageBody();
+    this.rootElement.appendChild(this.pageBody);
+  }
+
+  async createTable() {
     const tableWrapper = document.createElement('div');
     const table = document.createElement('table');
     const trHeader = document.createElement('tr');
     const thCurrency = document.createElement('th');
     const thCode = document.createElement('th');
-    const thRate = document.createElement('th');
     const thFollow = document.createElement('th');
 
-    thCurrency.innerText = 'Currency';
     thCode.innerText = 'Code';
-    thRate.innerText = 'Middle currency rate';
+    thCurrency.innerText = 'Currency';
     thFollow.innerText = 'Follow';
 
     tableWrapper.classList.add('table-wrapper');
     table.classList.add('pageBody__currency-table');
-    trHeader.append(thCurrency, thCode, thRate, thFollow);
+
+    if (this.curentTableIndex === 'c') {
+      const bid = document.createElement('th');
+      const ask = document.createElement('th');
+
+      bid.innerText = 'bid';
+      ask.innerText = 'ask';
+
+      trHeader.append(thCurrency, thCode, bid, ask, thFollow);
+    } else {
+      const thRate = document.createElement('th');
+      thRate.innerText = 'Middle currency rate';
+      trHeader.append(thCurrency, thCode, thRate, thFollow);
+    }
+
     table.appendChild(trHeader);
 
-    const { rates } = this.currenies[0];
+    const currencies = await this.getCurrency();
+
+    const { rates } = currencies[0];
 
     rates.forEach((item) => {
       const trCell = document.createElement('tr');
       const trCurrency = document.createElement('td');
       const trCode = document.createElement('td');
-      const trRate = document.createElement('td');
       const trFollow = document.createElement('td');
       const followBtn = document.createElement('button');
 
+      followBtn.addEventListener('click', this.addCurrencyToFavoriteList);
+
       trCurrency.innerText = item.currency;
       trCode.innerText = item.code;
-      trRate.innerText = item.mid;
       followBtn.innerText = 'Follow';
       trFollow.appendChild(followBtn);
 
-      trCell.append(trCurrency, trCode, trRate, trFollow);
-      console.log(trCell);
+      if (this.curentTableIndex === 'c') {
+        const trBid = document.createElement('td');
+        const trAsk = document.createElement('td');
+
+        trBid.innerText = item.bid;
+        trAsk.innerText = item.ask;
+
+        trCell.append(trCurrency, trCode, trBid, trAsk, trFollow);
+      } else {
+        const trRate = document.createElement('td');
+        trRate.innerText = item.mid;
+        trCell.append(trCurrency, trCode, trRate, trFollow);
+      }
+
       table.appendChild(trCell);
     });
 
@@ -132,14 +164,19 @@ export default class Page {
     this.table = tableWrapper;
   }
 
+  addCurrencyToFavoriteList() {
+    // localStorage.setItem(`Table-${this.curentTableIndex}`, JSON.stringify(this.currenies));
+    // const a = JSON.parse(localStorage.getItem(`Table-${this.curentTableIndex}`));
+    console.log(this.curentTableIndex);
+  }
+
   async getCurrency() {
+    const url = `http://api.nbp.pl/api/exchangerates/tables/${this.curentTableIndex}`;
     try {
-      const response = await fetch('http://api.nbp.pl/api/exchangerates/tables/a/');
+      const response = await fetch(url);
       const currencies = await response.json();
-      currencies.forEach((el) => {
-        console.log(el);
-      });
-      this.currenies = currencies;
+      this.currenies = currencies[0].rates;
+      return currencies;
     } catch (e) {
       throw new Error(e);
     }
