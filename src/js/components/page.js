@@ -8,6 +8,7 @@ export default class Page {
     this.currenies = null;
     this.curentTableIndex = 'a';
     this.updateTable = this.updateTable.bind(this);
+    this.addCurrencyToFavoriteList = this.addCurrencyToFavoriteList.bind(this);
   }
 
   async render() {
@@ -87,6 +88,7 @@ export default class Page {
 
   updateTable(e) {
     this.curentTableIndex = e.target.closest('button').dataset.id;
+    console.log(this.curentTableIndex);
     this.pageBody.remove();
     this.createTable();
     this.createPageBody();
@@ -141,6 +143,7 @@ export default class Page {
       trCode.innerText = item.code;
       followBtn.innerText = 'Follow';
       trFollow.appendChild(followBtn);
+      trCell.dataset.code = item.code;
 
       if (this.curentTableIndex === 'c') {
         const trBid = document.createElement('td');
@@ -164,10 +167,15 @@ export default class Page {
     this.table = tableWrapper;
   }
 
-  addCurrencyToFavoriteList() {
-    // localStorage.setItem(`Table-${this.curentTableIndex}`, JSON.stringify(this.currenies));
-    // const a = JSON.parse(localStorage.getItem(`Table-${this.curentTableIndex}`));
-    console.log(this.curentTableIndex);
+  addCurrencyToFavoriteList(e) {
+    const { code } = e.target.closest('tr').dataset;
+    let oldTable = JSON.parse(localStorage.getItem(`Table-${this.curentTableIndex}`));
+    if (oldTable === null) {
+      oldTable = [];
+    }
+    // eslint-disable-next-line no-unused-expressions
+    oldTable.indexOf(code) === -1 ? oldTable.push(code) : alert('This item already exists');
+    localStorage.setItem(`Table-${this.curentTableIndex}`, JSON.stringify(oldTable));
   }
 
   async getCurrency() {
