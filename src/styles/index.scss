@@ -24,17 +24,24 @@ body {
 
 .pageBody {
   display: flex;
+  flex-direction: column;
   grid-area: p;
+  align-items: center;
   justify-content: center;
   background-color: darkgrey;
+
+  .table-wrapper {
+    height: 100Vh;
+    overflow-y: scroll;
+  }
   table {
     width: 50rem;
     font-family: arial, sans-serif;
     border-collapse: collapse;
   }
   td, th {
-    text-align: left;
     padding: 8px;
+    text-align: center;
     border: 1px solid #dddddd;
   }
   tr:nth-child(even) {
