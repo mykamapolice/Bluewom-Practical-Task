@@ -5,6 +5,7 @@ export default class FavoreCurrencies {
     this.tableWrapper = null;
     this.favCur = [];
     this.table = null;
+    this.removeCurrencyFromFavoriteList = this.removeCurrencyFromFavoriteList.bind(this);
   }
 
   async render() {
@@ -12,9 +13,9 @@ export default class FavoreCurrencies {
     await this.createTable();
     if (this.favCur.length < 1) {
       this.rootElement.remove();
-      const message = document.createElement('h1');
-      message.innerText = 'nie obserwujesz zadnej waluty!';
-      this.rootElement.appendChild(message);
+      // const message = document.createElement('h1');
+      // // message.innerText = 'nie obserwujesz zadnej waluty!';
+      // this.rootElement.appendChild(message);
     } else {
       this.rootElement.firstChild.remove();
       this.rootElement.appendChild(this.table);
@@ -103,8 +104,13 @@ export default class FavoreCurrencies {
     this.table = table;
   }
 
-  removeCurrencyFromFavoriteList() {
-    this.a = '123';
+  removeCurrencyFromFavoriteList(e) {
+    const { code } = e.target.closest('tr').dataset;
+    const oldTable = JSON.parse(localStorage.getItem(`Table-${this.curentTableIndex}`));
+    const index = oldTable.indexOf(code);
+    oldTable.splice(index, 1);
+    localStorage.setItem(`Table-${this.curentTableIndex}`, JSON.stringify(oldTable));
+    e.target.closest('tr').remove();
   }
 
   async getCurrency() {
