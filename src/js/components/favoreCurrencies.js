@@ -6,6 +6,7 @@ export default class FavoreCurrencies {
     this.favCur = [];
     this.table = null;
     this.removeCurrencyFromFavoriteList = this.removeCurrencyFromFavoriteList.bind(this);
+    this.unfollowAllCurrencies = this.unfollowAllCurrencies.bind(this);
   }
 
   async render() {
@@ -38,10 +39,15 @@ export default class FavoreCurrencies {
     const thCurrency = document.createElement('th');
     const thCode = document.createElement('th');
     const thFollow = document.createElement('th');
+    const unfollowAllBtn = document.createElement('button');
 
     thCode.innerText = 'Code';
     thCurrency.innerText = 'Currency';
-    thFollow.innerText = 'Follow';
+    thFollow.innerText = 'Unfollow';
+    unfollowAllBtn.innerText = 'clear';
+    thFollow.appendChild(unfollowAllBtn);
+
+    unfollowAllBtn.addEventListener('click', this.unfollowAllCurrencies);
 
     table.classList.add('pageBody__currency-table');
 
@@ -102,6 +108,12 @@ export default class FavoreCurrencies {
     });
 
     this.table = table;
+  }
+
+  unfollowAllCurrencies() {
+    localStorage.removeItem(`Table-${this.curentTableIndex}`);
+    console.log(this.rootElement);
+    this.rootElement.remove();
   }
 
   removeCurrencyFromFavoriteList(e) {

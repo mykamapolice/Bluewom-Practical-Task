@@ -13,6 +13,7 @@ export default class Page {
     this.onAllCurrenciesButtonClick = this.onAllCurrenciesButtonClick.bind(this);
     this.onFavoriteCurrencyButtonClick = this.onFavoriteCurrencyButtonClick.bind(this);
     this.rerenderTable = this.rerenderTable.bind(this);
+    this.clearALLCurrencies = this.clearALLCurrencies.bind(this);
   }
 
   async render() {
@@ -44,21 +45,32 @@ export default class Page {
     const allCurrenciesText = document.createElement('h1');
     const favCurrenciesCategory = document.createElement('div');
     const favCurrenciesText = document.createElement('h1');
+    const unfollowAllBtn = document.createElement('button');
 
     allCurrenciesText.innerText = 'Wszystkie waluty';
     favCurrenciesText.innerText = 'Ulubione waluty';
+    unfollowAllBtn.innerText = 'Unfollow All';
 
     allCurrenciesCategory.appendChild(allCurrenciesText);
+    allCurrenciesCategory.classList.add('choosen');
     favCurrenciesCategory.appendChild(favCurrenciesText);
+    favCurrenciesCategory.appendChild(unfollowAllBtn);
 
     allCurrenciesCategory.addEventListener('click', this.onAllCurrenciesButtonClick);
 
-    favCurrenciesCategory.addEventListener('click', this.onFavoriteCurrencyButtonClick);
+    favCurrenciesText.addEventListener('click', this.onFavoriteCurrencyButtonClick);
+
+    unfollowAllBtn.addEventListener('click', this.clearALLCurrencies);
 
     sidebar.append(allCurrenciesCategory, favCurrenciesCategory);
     sidebar.classList.add('sidebar');
 
     this.sidebar = sidebar;
+  }
+
+  clearALLCurrencies(e) {
+    localStorage.clear();
+    this.onFavoriteCurrencyButtonClick(e);
   }
 
   onAllCurrenciesButtonClick(e) {
