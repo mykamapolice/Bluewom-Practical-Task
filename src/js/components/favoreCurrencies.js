@@ -13,10 +13,10 @@ export default class FavoreCurrencies {
     this.getFavoriteurencies();
     await this.createTable();
     if (this.favCur.length < 1) {
-      this.rootElement.remove();
-      // const message = document.createElement('h1');
-      // // message.innerText = 'nie obserwujesz zadnej waluty!';
-      // this.rootElement.appendChild(message);
+      this.rootElement.firstChild.remove();
+      const message = document.createElement('h1');
+      message.innerText = 'nie obserwujesz jeszcze zadnej waluty!';
+      this.rootElement.appendChild(message);
     } else {
       this.rootElement.firstChild.remove();
       this.rootElement.appendChild(this.table);
@@ -112,7 +112,6 @@ export default class FavoreCurrencies {
 
   unfollowAllCurrencies() {
     localStorage.removeItem(`Table-${this.curentTableIndex}`);
-    console.log(this.rootElement);
     this.rootElement.remove();
   }
 

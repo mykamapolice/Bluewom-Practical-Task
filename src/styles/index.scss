@@ -6,6 +6,9 @@ body {
   grid-template-areas: 'h' 's' 'p';
   grid-template-rows: 2fr 2fr 20fr;
   margin: 2rem;
+  button {
+    cursor: pointer;
+  }
 }
 
 .header {
@@ -20,6 +23,10 @@ body {
   grid-area: s;
   justify-content: space-around;
   background-color: coral;
+  h1 {
+    cursor: pointer;
+    text-align: center;
+  }
   .choosen {
     background-color: cadetblue;
   }
@@ -33,9 +40,16 @@ body {
   justify-content: center;
   background-color: darkgrey;
 
+  .table-header {
+    text-align: center;
+  }
+
   .table-wrapper {
     height: 100Vh;
     overflow-y: scroll;
+    text-align: center;
+    width: 51rem;
+    overflow-x: hidden;
   }
   table {
     width: 50rem;

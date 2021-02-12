@@ -1,6 +1,12 @@
 import FavoreCurrencies from './favoreCurrencies';
 import AllCurrencies from './allCurrencies';
 
+const names = {
+  a: 'Tabela A kursów średnich walut obcych',
+  b: 'Tabela B kursów średnich walut obcych',
+  c: 'Tabela C kursów kupna i sprzedaży walut obcych',
+};
+
 export default class Page {
   constructor(rootElement) {
     this.rootElement = rootElement;
@@ -14,6 +20,7 @@ export default class Page {
     this.onFavoriteCurrencyButtonClick = this.onFavoriteCurrencyButtonClick.bind(this);
     this.rerenderTable = this.rerenderTable.bind(this);
     this.clearALLCurrencies = this.clearALLCurrencies.bind(this);
+    this.currentTable = names.a;
   }
 
   async render() {
@@ -23,7 +30,6 @@ export default class Page {
 
     this.rootElement.appendChild(this.header);
     this.rootElement.appendChild(this.sidebar);
-    console.log(this.pageBody);
     await this.rootElement.appendChild(this.pageBody);
   }
 
@@ -52,8 +58,11 @@ export default class Page {
     unfollowAllBtn.innerText = 'Unfollow All';
 
     allCurrenciesCategory.appendChild(allCurrenciesText);
+    this.allCurrenciesCategory = allCurrenciesCategory;
     allCurrenciesCategory.classList.add('choosen');
+
     favCurrenciesCategory.appendChild(favCurrenciesText);
+    this.favCurrenciesCategory = favCurrenciesCategory;
     favCurrenciesCategory.appendChild(unfollowAllBtn);
 
     allCurrenciesCategory.addEventListener('click', this.onAllCurrenciesButtonClick);
@@ -76,8 +85,12 @@ export default class Page {
   onAllCurrenciesButtonClick(e) {
     this.rerenderTable();
     this.allCur = e.target.closest('div');
-    this.allCur.classList.add('choosen');
-    this.favcur.classList.remove('choosen');
+    this.allCurrenciesCategory.classList.add('choosen');
+    if (this.favcur) {
+      this.favCurrenciesCategory.classList.remove('choosen');
+    } else {
+      this.allCurrenciesCategory.classList.remove('choosen');
+    }
   }
 
   async onFavoriteCurrencyButtonClick(e) {
@@ -85,8 +98,8 @@ export default class Page {
     await favTable.render();
     this.favTable = favTable.table;
     this.favcur = e.target.closest('div');
-    this.favcur.classList.add('choosen');
-    this.allCur.classList.remove('choosen');
+    this.favCurrenciesCategory.classList.add('choosen');
+    this.allCurrenciesCategory.classList.remove('choosen');
   }
 
   async createPageBody() {
@@ -96,23 +109,34 @@ export default class Page {
     const pageWrapper = document.createElement('section');
     pageWrapper.classList.add('pageBody');
 
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('table-header');
     const buttonsWrapper = document.createElement('div');
+    const titleWrapper = document.createElement('div');
+    const title = document.createElement('h1');
+
+    this.title = title;
+    this.title.innerText = this.currentTable;
+    titleWrapper.appendChild(title);
+
     const btnA = document.createElement('button');
     const btnB = document.createElement('button');
     const btnC = document.createElement('button');
 
-    btnA.innerText = 'tabela A';
+    btnA.innerText = 'Tabela A';
     btnA.dataset.id = 'a';
-    btnB.innerText = 'tabela B';
+    btnB.innerText = 'Tabela B';
     btnB.dataset.id = 'b';
-    btnC.innerText = 'tabela C';
+    btnC.innerText = 'Tabela C';
     btnC.dataset.id = 'c';
     buttonsWrapper.classList.add('buttons');
 
     buttonsWrapper.append(btnA, btnB, btnC);
     buttonsWrapper.addEventListener('click', this.rerenderTable);
+    titleWrapper.appendChild(title);
+    wrapper.append(buttonsWrapper, titleWrapper);
 
-    pageWrapper.appendChild(buttonsWrapper);
+    pageWrapper.appendChild(wrapper);
     const newTable = new AllCurrencies(this.tableWrapper, this.curentTableIndex);
     await newTable.render();
     pageWrapper.appendChild(this.tableWrapper);
@@ -124,6 +148,14 @@ export default class Page {
     if (e !== undefined) {
       this.curentTableIndex = e.target.closest('button').dataset.id;
     }
+
+    const index = this.curentTableIndex;
+    this.currentTable = names[index];
+    this.title.innerText = this.currentTable;
+
+    this.favCurrenciesCategory.classList.remove('choosen');
+    this.allCurrenciesCategory.classList.add('choosen');
+
     this.tableWrapper.remove();
     const newTable = new AllCurrencies(this.tableWrapper, this.curentTableIndex);
     await newTable.render();
