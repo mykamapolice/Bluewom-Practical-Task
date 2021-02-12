@@ -1,3 +1,6 @@
+import FavoreCurrencies from './favoreCurrencies';
+import AllCurrencies from './allCurrencies';
+
 export default class Page {
   constructor(rootElement) {
     this.rootElement = rootElement;
@@ -7,19 +10,20 @@ export default class Page {
     this.table = null;
     this.currenies = null;
     this.curentTableIndex = 'a';
-    this.updateTable = this.updateTable.bind(this);
-    this.addCurrencyToFavoriteList = this.addCurrencyToFavoriteList.bind(this);
+    this.onAllCurrenciesButtonClick = this.onAllCurrenciesButtonClick.bind(this);
+    this.onFavoriteCurrencyButtonClick = this.onFavoriteCurrencyButtonClick.bind(this);
+    this.rerenderTable = this.rerenderTable.bind(this);
   }
 
   async render() {
     this.createHeader();
     this.createsidebar();
-    await this.createTable();
-    this.createPageBody();
+    await this.createPageBody();
 
     this.rootElement.appendChild(this.header);
     this.rootElement.appendChild(this.sidebar);
-    this.rootElement.appendChild(this.pageBody);
+    console.log(this.pageBody);
+    await this.rootElement.appendChild(this.pageBody);
   }
 
   createHeader() {
@@ -47,13 +51,9 @@ export default class Page {
     allCurrenciesCategory.appendChild(allCurrenciesText);
     favCurrenciesCategory.appendChild(favCurrenciesText);
 
-    allCurrenciesCategory.addEventListener('click', () => {
-      console.log('Wszystkie waluty');
-    });
+    allCurrenciesCategory.addEventListener('click', this.onAllCurrenciesButtonClick);
 
-    favCurrenciesCategory.addEventListener('click', () => {
-      console.log('Ulubione waluty');
-    });
+    favCurrenciesCategory.addEventListener('click', this.onFavoriteCurrencyButtonClick);
 
     sidebar.append(allCurrenciesCategory, favCurrenciesCategory);
     sidebar.classList.add('sidebar');
@@ -61,7 +61,26 @@ export default class Page {
     this.sidebar = sidebar;
   }
 
-  createPageBody() {
+  onAllCurrenciesButtonClick(e) {
+    this.rerenderTable();
+    this.allCur = e.target.closest('div');
+    this.allCur.classList.add('choosen');
+    this.favcur.classList.remove('choosen');
+  }
+
+  async onFavoriteCurrencyButtonClick(e) {
+    const favTable = new FavoreCurrencies(this.tableWrapper, this.curentTableIndex);
+    await favTable.render();
+    this.favTable = favTable.table;
+    this.favcur = e.target.closest('div');
+    this.favcur.classList.add('choosen');
+    this.allCur.classList.remove('choosen');
+  }
+
+  async createPageBody() {
+    const tableWrapper = document.createElement('div');
+    tableWrapper.classList.add('table-wrapper');
+    this.tableWrapper = tableWrapper;
     const pageWrapper = document.createElement('section');
     pageWrapper.classList.add('pageBody');
 
@@ -76,117 +95,26 @@ export default class Page {
     btnB.dataset.id = 'b';
     btnC.innerText = 'tabela C';
     btnC.dataset.id = 'c';
+    buttonsWrapper.classList.add('buttons');
 
     buttonsWrapper.append(btnA, btnB, btnC);
-    buttonsWrapper.addEventListener('click', this.updateTable);
+    buttonsWrapper.addEventListener('click', this.rerenderTable);
 
     pageWrapper.appendChild(buttonsWrapper);
-    pageWrapper.appendChild(this.table);
+    const newTable = new AllCurrencies(this.tableWrapper, this.curentTableIndex);
+    await newTable.render();
+    pageWrapper.appendChild(this.tableWrapper);
 
     this.pageBody = pageWrapper;
   }
 
-  updateTable(e) {
-    this.curentTableIndex = e.target.closest('button').dataset.id;
-    console.log(this.curentTableIndex);
-    this.pageBody.remove();
-    this.createTable();
-    this.createPageBody();
-    this.rootElement.appendChild(this.pageBody);
-  }
-
-  async createTable() {
-    const tableWrapper = document.createElement('div');
-    const table = document.createElement('table');
-    const trHeader = document.createElement('tr');
-    const thCurrency = document.createElement('th');
-    const thCode = document.createElement('th');
-    const thFollow = document.createElement('th');
-
-    thCode.innerText = 'Code';
-    thCurrency.innerText = 'Currency';
-    thFollow.innerText = 'Follow';
-
-    tableWrapper.classList.add('table-wrapper');
-    table.classList.add('pageBody__currency-table');
-
-    if (this.curentTableIndex === 'c') {
-      const bid = document.createElement('th');
-      const ask = document.createElement('th');
-
-      bid.innerText = 'bid';
-      ask.innerText = 'ask';
-
-      trHeader.append(thCurrency, thCode, bid, ask, thFollow);
-    } else {
-      const thRate = document.createElement('th');
-      thRate.innerText = 'Middle currency rate';
-      trHeader.append(thCurrency, thCode, thRate, thFollow);
+  async rerenderTable(e) {
+    if (e !== undefined) {
+      this.curentTableIndex = e.target.closest('button').dataset.id;
     }
-
-    table.appendChild(trHeader);
-
-    const currencies = await this.getCurrency();
-
-    const { rates } = currencies[0];
-
-    rates.forEach((item) => {
-      const trCell = document.createElement('tr');
-      const trCurrency = document.createElement('td');
-      const trCode = document.createElement('td');
-      const trFollow = document.createElement('td');
-      const followBtn = document.createElement('button');
-
-      followBtn.addEventListener('click', this.addCurrencyToFavoriteList);
-
-      trCurrency.innerText = item.currency;
-      trCode.innerText = item.code;
-      followBtn.innerText = 'Follow';
-      trFollow.appendChild(followBtn);
-      trCell.dataset.code = item.code;
-
-      if (this.curentTableIndex === 'c') {
-        const trBid = document.createElement('td');
-        const trAsk = document.createElement('td');
-
-        trBid.innerText = item.bid;
-        trAsk.innerText = item.ask;
-
-        trCell.append(trCurrency, trCode, trBid, trAsk, trFollow);
-      } else {
-        const trRate = document.createElement('td');
-        trRate.innerText = item.mid;
-        trCell.append(trCurrency, trCode, trRate, trFollow);
-      }
-
-      table.appendChild(trCell);
-    });
-
-    tableWrapper.appendChild(table);
-
-    this.table = tableWrapper;
-  }
-
-  addCurrencyToFavoriteList(e) {
-    const { code } = e.target.closest('tr').dataset;
-    let oldTable = JSON.parse(localStorage.getItem(`Table-${this.curentTableIndex}`));
-    if (oldTable === null) {
-      oldTable = [];
-    }
-    // eslint-disable-next-line no-unused-expressions
-    oldTable.indexOf(code) === -1 ? oldTable.push(code) : alert('This item already exists');
-    localStorage.setItem(`Table-${this.curentTableIndex}`, JSON.stringify(oldTable));
-  }
-
-  async getCurrency() {
-    const url = `http://api.nbp.pl/api/exchangerates/tables/${this.curentTableIndex}`;
-    try {
-      const response = await fetch(url);
-      const currencies = await response.json();
-      this.currenies = currencies[0].rates;
-      return currencies;
-    } catch (e) {
-      throw new Error(e);
-    }
+    this.tableWrapper.remove();
+    const newTable = new AllCurrencies(this.tableWrapper, this.curentTableIndex);
+    await newTable.render();
+    this.pageBody.appendChild(this.tableWrapper);
   }
 }
