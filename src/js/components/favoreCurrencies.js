@@ -7,6 +7,7 @@ export default class FavoreCurrencies {
     this.table = null;
     this.removeCurrencyFromFavoriteList = this.removeCurrencyFromFavoriteList.bind(this);
     this.unfollowAllCurrencies = this.unfollowAllCurrencies.bind(this);
+    this.errorMessage = 'Nie obserwujesz jeszcze zadnej waluty z tej tabeli!';
   }
 
   async render() {
@@ -15,7 +16,7 @@ export default class FavoreCurrencies {
     if (this.favCur.length < 1) {
       this.rootElement.firstChild.remove();
       const message = document.createElement('h1');
-      message.innerText = 'nie obserwujesz jeszcze zadnej waluty!';
+      message.innerText = this.errorMessage;
       this.rootElement.appendChild(message);
     } else {
       this.rootElement.firstChild.remove();
@@ -112,23 +113,34 @@ export default class FavoreCurrencies {
 
   unfollowAllCurrencies() {
     localStorage.removeItem(`Table-${this.curentTableIndex}`);
-    this.rootElement.remove();
+    this.rootElement.firstChild.remove();
+
+    const message = document.createElement('h1');
+    message.innerText = this.errorMessage;
+    this.rootElement.appendChild(message);
   }
 
   removeCurrencyFromFavoriteList(e) {
     const { code } = e.target.closest('tr').dataset;
     const oldTable = JSON.parse(localStorage.getItem(`Table-${this.curentTableIndex}`));
     const index = oldTable.indexOf(code);
+
     oldTable.splice(index, 1);
     localStorage.setItem(`Table-${this.curentTableIndex}`, JSON.stringify(oldTable));
     e.target.closest('tr').remove();
+
+    if (oldTable.length < 1) {
+      this.unfollowAllCurrencies();
+    }
   }
 
   async getCurrency() {
     const url = `http://api.nbp.pl/api/exchangerates/tables/${this.curentTableIndex}`;
+
     try {
       const response = await fetch(url);
       const currencies = await response.json();
+
       this.currenies = currencies[0].rates;
       return currencies;
     } catch (e) {

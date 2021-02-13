@@ -1,9 +1,15 @@
+const messages = {
+  added: 'added to favorites',
+  error: 'item allready exist',
+};
+
 export default class AllCurrencies {
   constructor(rootElement, index) {
     this.rootElement = rootElement;
     this.curentTableIndex = index;
     this.tableWrapper = null;
     this.table = null;
+    this.message = messages.added;
     this.addCurrencyToFavoriteList = this.addCurrencyToFavoriteList.bind(this);
     this.render = this.render.bind(this);
   }
@@ -42,8 +48,10 @@ export default class AllCurrencies {
       thRate.innerText = 'Middle currency rate';
       trHeader.append(thCurrency, thCode, thRate, thFollow);
     }
-
     table.appendChild(trHeader);
+
+    this.createTooltip();
+    table.appendChild(this.tooltip);
 
     const currencies = await this.getCurrency();
 
@@ -57,6 +65,7 @@ export default class AllCurrencies {
       const followBtn = document.createElement('button');
 
       followBtn.addEventListener('click', this.addCurrencyToFavoriteList);
+      followBtn.classList.add('tooltip');
 
       trCurrency.innerText = item.currency;
       trCode.innerText = item.code;
@@ -90,8 +99,19 @@ export default class AllCurrencies {
     if (oldTable === null) {
       oldTable = [];
     }
-    // eslint-disable-next-line no-unused-expressions
-    oldTable.indexOf(code) === -1 ? oldTable.push(code) : alert('This item already exists');
+
+    if (oldTable.indexOf(code) === -1) {
+      oldTable.push(code);
+      this.tooltip.firstChild.innerText = messages.added;
+      this.showTooltip();
+      setTimeout(this.showTooltip, 3000);
+    } else {
+      this.tooltip.firstChild.innerText = messages.error;
+      this.showTooltip();
+      setTimeout(this.showTooltip, 3000);
+    }
+
+    // oldTable.indexOf(code) === -1 ? oldTable.push(code) : alert('This item already exists');
     localStorage.setItem(`Table-${this.curentTableIndex}`, JSON.stringify(oldTable));
   }
 
@@ -105,5 +125,20 @@ export default class AllCurrencies {
     } catch (e) {
       throw new Error(e);
     }
+  }
+
+  createTooltip() {
+    const tooltip = document.createElement('div');
+    const tooltipText = document.createElement('span');
+    tooltipText.innerText = this.message;
+
+    tooltip.classList.add('tooltiptext');
+    tooltip.appendChild(tooltipText);
+    this.tooltip = tooltip;
+  }
+
+  showTooltip() {
+    const a = document.querySelector('.tooltiptext');
+    a.classList.toggle('active');
   }
 }

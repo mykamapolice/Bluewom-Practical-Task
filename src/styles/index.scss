@@ -45,11 +45,13 @@ body {
   }
 
   .table-wrapper {
-    height: 100Vh;
+    height: 50Vh;
     overflow-y: scroll;
     text-align: center;
     width: 51rem;
     overflow-x: hidden;
+    border: solid 1px red;
+    margin-bottom: 20rem;
   }
   table {
     width: 50rem;
@@ -64,4 +66,31 @@ body {
   tr:nth-child(even) {
     background-color: #dddddd;
   }
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+  cursor: pointer;
+}
+
+.tooltiptext {
+  visibility: hidden;
+  width: 22rem;
+  height: 3rem;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 42%;
+  font-size: 2.5rem;
+  transition: 1s;
+}
+
+.active{
+  visibility: visible;
 }

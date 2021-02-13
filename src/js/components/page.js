@@ -82,15 +82,13 @@ export default class Page {
     this.onFavoriteCurrencyButtonClick(e);
   }
 
-  onAllCurrenciesButtonClick(e) {
-    this.rerenderTable();
+  async onAllCurrenciesButtonClick(e) {
     this.allCur = e.target.closest('div');
     this.allCurrenciesCategory.classList.add('choosen');
     if (this.favcur) {
       this.favCurrenciesCategory.classList.remove('choosen');
-    } else {
-      this.allCurrenciesCategory.classList.remove('choosen');
     }
+    await this.rerenderTable();
   }
 
   async onFavoriteCurrencyButtonClick(e) {
@@ -153,12 +151,18 @@ export default class Page {
     this.currentTable = names[index];
     this.title.innerText = this.currentTable;
 
-    this.favCurrenciesCategory.classList.remove('choosen');
-    this.allCurrenciesCategory.classList.add('choosen');
-
     this.tableWrapper.remove();
-    const newTable = new AllCurrencies(this.tableWrapper, this.curentTableIndex);
-    await newTable.render();
-    this.pageBody.appendChild(this.tableWrapper);
+
+    if (this.favCurrenciesCategory.classList.contains('choosen')) {
+      const newTable = new FavoreCurrencies(this.tableWrapper, this.curentTableIndex);
+      await newTable.render();
+      this.pageBody.appendChild(this.tableWrapper);
+    } else if (this.allCurrenciesCategory.classList.contains('choosen')) {
+      const newTable = new AllCurrencies(this.tableWrapper, this.curentTableIndex);
+      await newTable.render();
+      this.pageBody.appendChild(this.tableWrapper);
+      this.favCurrenciesCategory.classList.remove('choosen');
+      this.allCurrenciesCategory.classList.add('choosen');
+    }
   }
 }
