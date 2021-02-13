@@ -1,12 +1,13 @@
 import sprites from '../helpers/sprites';
 
 export default class FavoreCurrencies {
-  constructor(rootElement, index) {
+  constructor(rootElement, index, data) {
     this.rootElement = rootElement;
     this.curentTableIndex = index;
     this.tableWrapper = null;
     this.favCur = [];
     this.table = null;
+    this.data = data;
     this.removeCurrencyFromFavoriteList = this.removeCurrencyFromFavoriteList.bind(this);
     this.unfollowAllCurrencies = this.unfollowAllCurrencies.bind(this);
     this.errorMessage = 'Nie obserwujesz jeszcze zadnej waluty z tej tabeli!';
@@ -15,7 +16,9 @@ export default class FavoreCurrencies {
   async render() {
     this.getFavoriteurencies();
     await this.createTable();
-    if (this.favCur.length < 1) {
+    if (this.rootElement.firstChild === null) {
+      this.rootElement.appendChild(this.table);
+    } else if (this.favCur.length < 1) {
       this.rootElement.firstChild.remove();
       const message = document.createElement('h1');
       message.innerText = this.errorMessage;
@@ -46,7 +49,6 @@ export default class FavoreCurrencies {
 
     thCode.innerText = 'Code';
     thCurrency.innerText = 'Currency';
-    // thFollow.innerText = 'Unfollow';
     unfollowAllBtn.innerHTML = sprites.clear;
     thFollow.appendChild(unfollowAllBtn);
 
@@ -70,11 +72,9 @@ export default class FavoreCurrencies {
 
     table.appendChild(trHeader);
 
-    const currencies = await this.getCurrency();
+    const currencies = await this.data;
 
-    const { rates } = currencies[0];
-
-    rates.forEach((item) => {
+    currencies.forEach((item) => {
       const trCell = document.createElement('tr');
       const trCurrency = document.createElement('td');
       const trCode = document.createElement('td');
@@ -133,20 +133,6 @@ export default class FavoreCurrencies {
 
     if (oldTable.length < 1) {
       this.unfollowAllCurrencies();
-    }
-  }
-
-  async getCurrency() {
-    const url = `http://api.nbp.pl/api/exchangerates/tables/${this.curentTableIndex}`;
-
-    try {
-      const response = await fetch(url);
-      const currencies = await response.json();
-
-      this.currenies = currencies[0].rates;
-      return currencies;
-    } catch (e) {
-      throw new Error(e);
     }
   }
 }

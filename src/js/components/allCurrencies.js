@@ -1,17 +1,17 @@
 import sprites from '../helpers/sprites';
 
-const messages = {
-  added: 'added to favorites',
-  error: 'item allready exist',
+const MESSAGES = {
+  added: 'Dodano',
+  error: 'Pozycja już istnieje',
 };
 
 export default class AllCurrencies {
-  constructor(rootElement, index) {
+  constructor(rootElement, index, data) {
     this.rootElement = rootElement;
     this.curentTableIndex = index;
-    this.tableWrapper = null;
     this.table = null;
-    this.message = messages.added;
+    this.message = MESSAGES.added;
+    this.data = data;
     this.addCurrencyToFavoriteList = this.addCurrencyToFavoriteList.bind(this);
     this.render = this.render.bind(this);
   }
@@ -31,9 +31,9 @@ export default class AllCurrencies {
     const thCode = document.createElement('th');
     const thFollow = document.createElement('th');
 
-    thCode.innerText = 'Code';
-    thCurrency.innerText = 'Currency';
-    thFollow.innerText = 'Follow';
+    thCode.innerText = 'Kod';
+    thCurrency.innerText = 'Waluta';
+    thFollow.innerText = 'subskrybuj';
 
     table.classList.add('pageBody__currency-table');
 
@@ -41,13 +41,13 @@ export default class AllCurrencies {
       const bid = document.createElement('th');
       const ask = document.createElement('th');
 
-      bid.innerText = 'bid';
-      ask.innerText = 'ask';
+      bid.innerText = 'Kupno';
+      ask.innerText = 'Sprzedaż';
 
       trHeader.append(thCurrency, thCode, bid, ask, thFollow);
     } else {
       const thRate = document.createElement('th');
-      thRate.innerText = 'Middle currency rate';
+      thRate.innerText = 'Średni kurs';
       trHeader.append(thCurrency, thCode, thRate, thFollow);
     }
     table.appendChild(trHeader);
@@ -55,22 +55,18 @@ export default class AllCurrencies {
     this.createTooltip();
     table.appendChild(this.tooltip);
 
-    const currencies = await this.getCurrency();
+    const currencies = await this.data;
 
-    const { rates } = currencies[0];
-
-    rates.forEach((item) => {
+    currencies.forEach((item) => {
       const trCell = document.createElement('tr');
       const trCurrency = document.createElement('td');
       const trCode = document.createElement('td');
       const trFollow = document.createElement('td');
       const followBtn = document.createElement('button');
-      // const img = document.createElement('img');
 
       followBtn.addEventListener('click', this.addCurrencyToFavoriteList);
       followBtn.classList.add('tooltip');
 
-      // img.src = '../images/add.svg';
       trCurrency.innerText = item.currency;
       trCode.innerText = item.code;
       followBtn.innerHTML = sprites.add;
@@ -106,29 +102,17 @@ export default class AllCurrencies {
 
     if (oldTable.indexOf(code) === -1) {
       oldTable.push(code);
-      this.tooltip.firstChild.innerText = messages.added;
+      this.tooltip.firstChild.innerText = MESSAGES.added;
       this.showTooltip();
       setTimeout(this.hideTooltip, 3000);
     } else {
-      this.tooltip.firstChild.innerText = messages.error;
+      this.tooltip.firstChild.innerText = MESSAGES.error;
       this.showTooltip();
       setTimeout(this.hideTooltip, 3000);
     }
 
     // oldTable.indexOf(code) === -1 ? oldTable.push(code) : alert('This item already exists');
     localStorage.setItem(`Table-${this.curentTableIndex}`, JSON.stringify(oldTable));
-  }
-
-  async getCurrency() {
-    const url = `http://api.nbp.pl/api/exchangerates/tables/${this.curentTableIndex}`;
-    try {
-      const response = await fetch(url);
-      const currencies = await response.json();
-      this.currenies = currencies[0].rates;
-      return currencies;
-    } catch (e) {
-      throw new Error(e);
-    }
   }
 
   createTooltip() {
@@ -141,17 +125,15 @@ export default class AllCurrencies {
     this.tooltip = tooltip;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   showTooltip() {
-    const a = document.querySelector('.tooltiptext');
-    if (a === null) return;
-    a.style.width = '22rem';
+    if (this.tooltip === null) return;
+    this.tooltip.style.width = '22rem';
   }
 
   // eslint-disable-next-line class-methods-use-this
   hideTooltip() {
-    const a = document.querySelector('.tooltiptext');
-    if (a === null) return;
-    a.style.width = '0rem';
+    const tooltip = document.querySelector('.tooltiptext');
+    if (tooltip === null) return;
+    tooltip.style.width = '0rem';
   }
 }
