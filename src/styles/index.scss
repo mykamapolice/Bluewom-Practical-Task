@@ -116,6 +116,9 @@ body {
     border: solid 2px #ffffff;
     margin-bottom: 11rem;
   }
+  .table-wrapper::-webkit-scrollbar {
+    display: none;
+  }
 
   table {
     width: 50rem;
@@ -128,6 +131,8 @@ body {
       border: none !important;
       outline: none;
     }
+
+
   }
 
   td, th {
@@ -155,7 +160,13 @@ body {
   display: inline-block;
   border-bottom: 1px dotted black;
   cursor: pointer;
+  svg:hover{
+    transform: scale(1.1);
+    transition: all ease 500ms;
+    color: purple;
+  }
 }
+
 
 .tooltiptext {
   width: 0;
@@ -175,4 +186,15 @@ body {
 
 .active {
   visibility: visible;
+}
+
+.wiggle svg:hover{
+  animation: wiggle 75ms infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes wiggle {
+  0% { transform: translate(2px, 0); }
+  50% { transform: translate(-2px, 0); }
+  100% { transform: translate(2px, 0); }
 }

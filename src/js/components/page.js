@@ -63,7 +63,7 @@ export default class Page {
     favCurrenciesText.innerText = 'Ulubione waluty';
     favCurrenciesCategory.classList.add('sidebar-categories');
     allCurrenciesCategory.classList.add('sidebar-categories');
-    unfollowAllBtn.innerText = 'Unfollow All';
+    unfollowAllBtn.innerText = 'Usuń wszystkie';
 
     allCurrenciesCategory.appendChild(allCurrenciesText);
     this.allCurrenciesCategory = allCurrenciesCategory;

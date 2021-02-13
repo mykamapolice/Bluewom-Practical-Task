@@ -16,10 +16,12 @@ export default class FavoreCurrencies {
   async render() {
     this.getFavoriteurencies();
     await this.createTable();
-    if (this.rootElement.firstChild === null) {
+    if (this.rootElement.firstChild === null && this.favCur.length > 0) {
       this.rootElement.appendChild(this.table);
     } else if (this.favCur.length < 1) {
-      this.rootElement.firstChild.remove();
+      if (this.rootElement.firstChild !== null) {
+        this.rootElement.firstChild.remove();
+      }
       const message = document.createElement('h1');
       message.innerText = this.errorMessage;
       this.rootElement.appendChild(message);
@@ -50,6 +52,7 @@ export default class FavoreCurrencies {
     thCode.innerText = 'Code';
     thCurrency.innerText = 'Currency';
     unfollowAllBtn.innerHTML = sprites.clear;
+    unfollowAllBtn.classList.add('wiggle');
     thFollow.appendChild(unfollowAllBtn);
 
     unfollowAllBtn.addEventListener('click', this.unfollowAllCurrencies);
@@ -90,6 +93,7 @@ export default class FavoreCurrencies {
       trCurrency.innerText = item.currency;
       trCode.innerText = item.code;
       followBtn.innerHTML = sprites.del;
+      followBtn.classList.add('tooltip');
       trFollow.appendChild(followBtn);
       trCell.dataset.code = item.code;
 
