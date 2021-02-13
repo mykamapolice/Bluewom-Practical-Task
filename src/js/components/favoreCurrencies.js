@@ -1,3 +1,5 @@
+import sprites from '../helpers/sprites';
+
 export default class FavoreCurrencies {
   constructor(rootElement, index) {
     this.rootElement = rootElement;
@@ -44,8 +46,8 @@ export default class FavoreCurrencies {
 
     thCode.innerText = 'Code';
     thCurrency.innerText = 'Currency';
-    thFollow.innerText = 'Unfollow';
-    unfollowAllBtn.innerText = 'clear';
+    // thFollow.innerText = 'Unfollow';
+    unfollowAllBtn.innerHTML = sprites.clear;
     thFollow.appendChild(unfollowAllBtn);
 
     unfollowAllBtn.addEventListener('click', this.unfollowAllCurrencies);
@@ -87,7 +89,7 @@ export default class FavoreCurrencies {
 
       trCurrency.innerText = item.currency;
       trCode.innerText = item.code;
-      followBtn.innerText = 'Unfollow';
+      followBtn.innerHTML = sprites.del;
       trFollow.appendChild(followBtn);
       trCell.dataset.code = item.code;
 

@@ -85,7 +85,6 @@ module.exports = {
           filename: 'assets/fonts/[name][ext]',
         },
       },
-
       {
         test: /\.(svg)$/,
         type: 'asset/resource',

@@ -1,3 +1,5 @@
+import sprites from '../helpers/sprites';
+
 const messages = {
   added: 'added to favorites',
   error: 'item allready exist',
@@ -63,13 +65,15 @@ export default class AllCurrencies {
       const trCode = document.createElement('td');
       const trFollow = document.createElement('td');
       const followBtn = document.createElement('button');
+      // const img = document.createElement('img');
 
       followBtn.addEventListener('click', this.addCurrencyToFavoriteList);
       followBtn.classList.add('tooltip');
 
+      // img.src = '../images/add.svg';
       trCurrency.innerText = item.currency;
       trCode.innerText = item.code;
-      followBtn.innerText = 'Follow';
+      followBtn.innerHTML = sprites.add;
       trFollow.appendChild(followBtn);
       trCell.dataset.code = item.code;
 
@@ -104,11 +108,11 @@ export default class AllCurrencies {
       oldTable.push(code);
       this.tooltip.firstChild.innerText = messages.added;
       this.showTooltip();
-      setTimeout(this.showTooltip, 3000);
+      setTimeout(this.hideTooltip, 3000);
     } else {
       this.tooltip.firstChild.innerText = messages.error;
       this.showTooltip();
-      setTimeout(this.showTooltip, 3000);
+      setTimeout(this.hideTooltip, 3000);
     }
 
     // oldTable.indexOf(code) === -1 ? oldTable.push(code) : alert('This item already exists');
@@ -137,8 +141,17 @@ export default class AllCurrencies {
     this.tooltip = tooltip;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   showTooltip() {
     const a = document.querySelector('.tooltiptext');
-    a.classList.toggle('active');
+    if (a === null) return;
+    a.style.width = '22rem';
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  hideTooltip() {
+    const a = document.querySelector('.tooltiptext');
+    if (a === null) return;
+    a.style.width = '0rem';
   }
 }

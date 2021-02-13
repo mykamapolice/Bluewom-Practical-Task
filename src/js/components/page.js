@@ -48,13 +48,15 @@ export default class Page {
   createsidebar() {
     const sidebar = document.createElement('section');
     const allCurrenciesCategory = document.createElement('div');
-    const allCurrenciesText = document.createElement('h1');
+    const allCurrenciesText = document.createElement('h2');
     const favCurrenciesCategory = document.createElement('div');
-    const favCurrenciesText = document.createElement('h1');
+    const favCurrenciesText = document.createElement('h2');
     const unfollowAllBtn = document.createElement('button');
 
     allCurrenciesText.innerText = 'Wszystkie waluty';
     favCurrenciesText.innerText = 'Ulubione waluty';
+    favCurrenciesCategory.classList.add('sidebar-categories');
+    allCurrenciesCategory.classList.add('sidebar-categories');
     unfollowAllBtn.innerText = 'Unfollow All';
 
     allCurrenciesCategory.appendChild(allCurrenciesText);
@@ -111,7 +113,7 @@ export default class Page {
     wrapper.classList.add('table-header');
     const buttonsWrapper = document.createElement('div');
     const titleWrapper = document.createElement('div');
-    const title = document.createElement('h1');
+    const title = document.createElement('h2');
 
     this.title = title;
     this.title.innerText = this.currentTable;
@@ -143,7 +145,7 @@ export default class Page {
   }
 
   async rerenderTable(e) {
-    if (e !== undefined) {
+    if (e !== undefined && e !== null) {
       this.curentTableIndex = e.target.closest('button').dataset.id;
     }
 
