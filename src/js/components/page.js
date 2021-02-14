@@ -68,6 +68,9 @@ export default class Page {
     allCurrenciesCategory.appendChild(allCurrenciesText);
     this.allCurrenciesCategory = allCurrenciesCategory;
 
+    allCurrenciesCategory.classList.add('zoom');
+    favCurrenciesCategory.classList.add('zoom');
+
     const currentTab = localStorage.getItem('Tab');
     if (currentTab === 'FAV') {
       favCurrenciesCategory.classList.add('choosen');
@@ -103,13 +106,13 @@ export default class Page {
     await this.rerenderTable();
   }
 
-  async onFavoriteCurrencyButtonClick(e) {
+  async onFavoriteCurrencyButtonClick() {
     const favTable = new FavoreCurrencies(this.tableWrapper, this.curentTableIndex, this.currenies);
     this.currentTab = TABS.FAV;
-    this.saveCurrentTab();
+    localStorage.setItem('Tab', this.currentTab);
     await favTable.render();
+
     this.favTable = favTable.table;
-    this.favcur = e.target.closest('div');
     this.favCurrenciesCategory.classList.add('choosen');
     this.allCurrenciesCategory.classList.remove('choosen');
   }
@@ -146,6 +149,7 @@ export default class Page {
     buttonsWrapper.append(btnA, btnB, btnC);
     buttonsWrapper.addEventListener('click', this.rerenderTable);
     titleWrapper.appendChild(title);
+
     wrapper.append(buttonsWrapper, titleWrapper);
     const currentTab = localStorage.getItem('Tab');
     if (currentTab !== null) {
@@ -160,6 +164,7 @@ export default class Page {
     } else if (this.currentTab === TABS.FAV) {
       const newTable = new FavoreCurrencies(this.tableWrapper,
         this.curentTableIndex, this.currenies);
+
       await newTable.render();
       this.allCurrenciesCategory.classList.remove('choosen');
       this.favCurrenciesCategory.classList.add('choosen');
@@ -184,12 +189,14 @@ export default class Page {
     if (this.favCurrenciesCategory.classList.contains('choosen')) {
       const newTable = new FavoreCurrencies(this.tableWrapper,
         this.curentTableIndex, this.currenies);
+
       await newTable.render();
       this.pageBody.appendChild(this.tableWrapper);
     } else if (this.allCurrenciesCategory.classList.contains('choosen')) {
       const newTable = new AllCurrencies(this.tableWrapper,
         this.curentTableIndex, this.currenies);
       this.currentTab = TABS.ALL;
+
       localStorage.setItem('Tab', this.currentTab);
       await newTable.render();
 
@@ -197,10 +204,6 @@ export default class Page {
       this.favCurrenciesCategory.classList.remove('choosen');
       this.allCurrenciesCategory.classList.add('choosen');
     }
-  }
-
-  saveCurrentTab() {
-    localStorage.setItem('Tab', this.currentTab);
   }
 
   async getCurrency() {

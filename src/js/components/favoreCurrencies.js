@@ -33,9 +33,7 @@ export default class FavoreCurrencies {
 
   getFavoriteurencies() {
     const currencies = JSON.parse(localStorage.getItem(`Table-${this.curentTableIndex}`));
-    if (!currencies) {
-      return;
-    }
+    if (!currencies) return;
     currencies.forEach((item) => {
       this.favCur.push(item);
     });

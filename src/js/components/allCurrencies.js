@@ -1,8 +1,8 @@
 import sprites from '../helpers/sprites';
 
 const MESSAGES = {
-  added: 'Dodano',
-  error: 'Pozycja już istnieje',
+  ADDED: 'Dodano',
+  ERROR: 'Pozycja już istnieje',
 };
 
 export default class AllCurrencies {
@@ -10,7 +10,7 @@ export default class AllCurrencies {
     this.rootElement = rootElement;
     this.curentTableIndex = index;
     this.table = null;
-    this.message = MESSAGES.added;
+    this.message = MESSAGES.ADDED;
     this.data = data;
     this.addCurrencyToFavoriteList = this.addCurrencyToFavoriteList.bind(this);
     this.render = this.render.bind(this);
@@ -18,9 +18,7 @@ export default class AllCurrencies {
 
   async render() {
     await this.createTable();
-    if (this.rootElement.firstChild) {
-      this.rootElement.firstChild.remove();
-    }
+    if (this.rootElement.firstChild) this.rootElement.firstChild.remove();
     this.rootElement.appendChild(this.table);
   }
 
@@ -33,7 +31,7 @@ export default class AllCurrencies {
 
     thCode.innerText = 'Kod';
     thCurrency.innerText = 'Waluta';
-    thFollow.innerText = 'subskrybuj';
+    thFollow.innerText = 'Subskrybuj';
 
     table.classList.add('pageBody__currency-table');
 
@@ -59,18 +57,18 @@ export default class AllCurrencies {
 
     currencies.forEach((item) => {
       const trCell = document.createElement('tr');
-      const trCurrency = document.createElement('td');
-      const trCode = document.createElement('td');
-      const trFollow = document.createElement('td');
+      const tdCurrency = document.createElement('td');
+      const tdCode = document.createElement('td');
+      const tdFollow = document.createElement('td');
       const followBtn = document.createElement('button');
 
       followBtn.addEventListener('click', this.addCurrencyToFavoriteList);
       followBtn.classList.add('tooltip');
 
-      trCurrency.innerText = item.currency;
-      trCode.innerText = item.code;
+      tdCurrency.innerText = item.currency;
+      tdCode.innerText = item.code;
       followBtn.innerHTML = sprites.add;
-      trFollow.appendChild(followBtn);
+      tdFollow.appendChild(followBtn);
       trCell.dataset.code = item.code;
 
       if (this.curentTableIndex === 'c') {
@@ -80,11 +78,11 @@ export default class AllCurrencies {
         trBid.innerText = item.bid;
         trAsk.innerText = item.ask;
 
-        trCell.append(trCurrency, trCode, trBid, trAsk, trFollow);
+        trCell.append(tdCurrency, tdCode, trBid, trAsk, tdFollow);
       } else {
         const trRate = document.createElement('td');
         trRate.innerText = item.mid;
-        trCell.append(trCurrency, trCode, trRate, trFollow);
+        trCell.append(tdCurrency, tdCode, trRate, tdFollow);
       }
 
       table.appendChild(trCell);
@@ -96,22 +94,19 @@ export default class AllCurrencies {
   addCurrencyToFavoriteList(e) {
     const { code } = e.target.closest('tr').dataset;
     let oldTable = JSON.parse(localStorage.getItem(`Table-${this.curentTableIndex}`));
-    if (oldTable === null) {
-      oldTable = [];
-    }
+    if (oldTable === null) oldTable = [];
 
     if (oldTable.indexOf(code) === -1) {
       oldTable.push(code);
-      this.tooltip.firstChild.innerText = MESSAGES.added;
+      this.tooltip.firstChild.innerText = MESSAGES.ADDED;
       this.showTooltip();
       setTimeout(this.hideTooltip, 3000);
     } else {
-      this.tooltip.firstChild.innerText = MESSAGES.error;
+      this.tooltip.firstChild.innerText = MESSAGES.ERROR;
       this.showTooltip();
       setTimeout(this.hideTooltip, 3000);
     }
 
-    // oldTable.indexOf(code) === -1 ? oldTable.push(code) : alert('This item already exists');
     localStorage.setItem(`Table-${this.curentTableIndex}`, JSON.stringify(oldTable));
   }
 

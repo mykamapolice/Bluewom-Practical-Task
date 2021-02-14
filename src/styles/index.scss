@@ -7,7 +7,6 @@ $main-color: #60a3bc;
 body {
   display: grid;
   grid-template-areas: 'h' 's' 'p';
-  //grid-template-rows: 6% 10% 68%;
   font-family: "Source Sans Pro", sans-serif;
 
   button {
@@ -17,9 +16,9 @@ body {
 
 .header {
   grid-area: h;
+  color: black;
   text-align: center;
   background-color: #ffffff;
-  color: black;
 }
 
 .sidebar {
@@ -27,26 +26,26 @@ body {
   flex-direction: row;
   grid-area: s;
   justify-content: space-around;
-  background: radial-gradient(circle, rgba(58,143,156,1) 0%, rgba(203,116,209,1) 100%);
   text-align: center;
+  background: radial-gradient(circle, rgba(58,143,156,1) 0%, rgba(203,116,209,1) 100%);
   .sidebar-categories {
-    cursor: pointer;
-    transition: 1s;
     display: flex;
     flex-direction: column;
     justify-content: center;
     font-size: 1.5rem;
+    cursor: pointer;
+    transition: 1s;
   }
   button {
+    display: inline-block;
+    padding: 20px;
     color: #fff !important;
     text-transform: uppercase;
     text-decoration: none;
     background: $main-color;
-    padding: 20px;
     border: 4px solid #494949 !important;
-    display: inline-block;
-    transition: all 0.4s ease 0s;
     outline: none;
+    transition: all 0.4s ease 0s;
   }
   button:hover {
     color: #ffffff !important;
@@ -56,13 +55,12 @@ body {
   }
 
   h1 {
-    cursor: pointer;
     text-align: center;
+    cursor: pointer;
   }
 
   .choosen {
     background-color: #ffffff;
-    //border-radius: 1rem;
     transition: 1s;
   }
 }
@@ -77,22 +75,22 @@ body {
   height: 81vh;
 
   .buttons {
-    padding: 1rem;
     display: flex;
     justify-content: space-around;
-    font-size: 2rem;
     width: 50rem;
+    padding: 1rem;
+    font-size: 2rem;
     button {
+      display: inline-block;
+      padding: 20px;
       color: #fff !important;
       text-transform: uppercase;
       text-decoration: none;
       background: $main-color;
-      padding: 20px;
-      border-radius: 50px;
-      display: inline-block;
       border: none;
-      transition: all 0.4s ease 0s;
+      border-radius: 50px;
       outline: none;
+      transition: all 0.4s ease 0s;
     }
 
     button:hover {
@@ -108,13 +106,13 @@ body {
   }
 
   .table-wrapper {
+    width: 51rem;
     height: 56rem;
+    margin-bottom: 11rem;
+    overflow-x: hidden;
     overflow-y: scroll;
     text-align: center;
-    width: 51rem;
-    overflow-x: hidden;
     border: solid 2px #ffffff;
-    margin-bottom: 11rem;
   }
   .table-wrapper::-webkit-scrollbar {
     display: none;
@@ -122,9 +120,9 @@ body {
 
   table {
     width: 50rem;
+    font-size: 1.4rem;
     font-family: arial, sans-serif;
     border-collapse: collapse;
-    font-size: 1.4rem;
 
     button {
       background: transparent;
@@ -137,8 +135,8 @@ body {
 
   td, th {
     padding: 8px;
-    text-align: center;
     font-weight: 600;
+    text-align: center;
   }
 
   th {
@@ -149,10 +147,6 @@ body {
     background-color: #ffffff;
     border: 1px solid #b6adad;
   }
-
-  //tr:nth-child(even) {
-  //  background-color: #dddddd;
-  //}
 }
 
 .tooltip {
@@ -160,28 +154,27 @@ body {
   display: inline-block;
   border-bottom: 1px dotted black;
   cursor: pointer;
-  svg:hover{
+  svg:hover {
+    color: purple;
     transform: scale(1.1);
     transition: all ease 500ms;
-    color: purple;
   }
 }
 
-
 .tooltiptext {
-  width: 0;
-  height: 3rem;
-  background-color: #ecae2b;
-  color: #000000;
-  text-align: center;
-  border-radius: 6px;
   position: absolute;
-  z-index: 1;
   top: 91%;
   left: 42%;
-  font-size: 2.5rem;
-  transition: 1s;
+  z-index: 1;
+  width: 0;
+  height: 3rem;
   overflow: hidden;
+  color: #000000;
+  font-size: 2.5rem;
+  text-align: center;
+  background-color: #ecae2b;
+  border-radius: 6px;
+  transition: 1s;
 }
 
 .active {
@@ -197,4 +190,9 @@ body {
   0% { transform: translate(2px, 0); }
   50% { transform: translate(-2px, 0); }
   100% { transform: translate(2px, 0); }
+}
+
+.zoom:hover{
+  transform: scale(1.1);
+  transition: all ease 500ms;
 }
