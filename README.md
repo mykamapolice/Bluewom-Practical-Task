@@ -6,7 +6,7 @@ Clone this repository with command
 git clone
 ```
 
-open repository folder and write npm install to instal dependencies
+open repository folder and write npm install to install dependencies
 
 ```bash
 npm i
